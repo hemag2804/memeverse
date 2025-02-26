@@ -22,6 +22,12 @@ export default function MemeDetail() {
     const newLikes = likes + 1;
     setLikes(newLikes);
     localStorage.setItem(`meme_likes_${id}`, newLikes);
+  
+    // Store API memes for leaderboard
+    const apiMemes = JSON.parse(localStorage.getItem("apiMemes") || "[]");
+    if (!apiMemes.find((m) => m.id === meme.id)) {
+      localStorage.setItem("apiMemes", JSON.stringify([...apiMemes, meme]));
+    }
   };
 
   const handleCommentSubmit = () => {

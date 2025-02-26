@@ -6,7 +6,7 @@ export default function Navbar() {
     <nav className="flex justify-between p-4 bg-gray-900 text-white">
       <h1 className="text-xl font-bold">MemeVerse 🎭</h1>
       <div className="flex space-x-6">
-        {["/", "/explore", "/upload", "/profile"].map((path) => (
+        {["/", "/explore", "/upload", "/profile", "/leaderboard"].map((path) => (
           <NavLink
             key={path}
             to={path}
