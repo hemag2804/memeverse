@@ -1,28 +1,30 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Explore from "./pages/Explore";
-import Upload from "./pages/Upload";
-import MemeDetail from "./pages/MemeDetail";
-import Profile from "./pages/Profile";
-import Leaderboard from "./pages/Leaderboard";
-import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 
-function App() {
+const Home = lazy(() => import("./pages/Home"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Upload = lazy(() => import("./pages/Upload"));
+const MemeDetail = lazy(() => import("./pages/MemeDetail"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+export default function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/upload" element={<Upload />} />
-        <Route path="/meme/:id" element={<MemeDetail />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<div className="text-center p-10">Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/meme/:id" element={<MemeDetail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
-
-export default App;

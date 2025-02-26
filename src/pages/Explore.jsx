@@ -111,7 +111,7 @@ export default function Explore() {
               .map((meme) => (
                 <Link key={meme.id} to={`/meme/${meme.id}`} state={{ meme }}>
                   <motion.div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 shadow-md" whileHover={{ scale: 1.05 }}>
-                    <img src={meme.url} alt={meme.name} className="w-full h-48 object-cover rounded-lg" />
+                    <img src={meme.url} alt={meme.name} className="w-full h-48 object-cover rounded-lg" loading="lazy"/>
                     <p className="mt-2 text-gray-900 dark:text-white font-medium">{meme.name}</p>
                   </motion.div>
                 </Link>

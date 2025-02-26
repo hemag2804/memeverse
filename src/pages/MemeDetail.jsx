@@ -49,7 +49,7 @@ export default function MemeDetail() {
   return (
     <div className="p-6 max-w-2xl mx-auto text-center">
       <motion.div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <img src={meme.url} alt="Meme" className="w-full h-60 object-cover rounded-lg" />
+        <img src={meme.url} alt="Meme" className="w-full h-60 object-cover rounded-lg" loading="lazy"/>
         <p className="mt-2 text-gray-900 dark:text-white font-medium">{meme.name}</p>
       </motion.div>
 
