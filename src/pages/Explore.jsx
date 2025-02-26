@@ -3,8 +3,9 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { debounce } from "lodash";
+import { Link } from "react-router-dom";
 
-const API_URL = "https://api.imgflip.com/get_memes"; // Meme API
+const API_URL = "https://api.imgflip.com/get_memes";
 
 export default function Explore() {
   const [memes, setMemes] = useState([]);
@@ -13,35 +14,32 @@ export default function Explore() {
   const [filter, setFilter] = useState("trending");
   const [sortBy, setSortBy] = useState("likes");
   const [page, setPage] = useState(1);
-  const { ref, inView } = useInView(); // Detect when user scrolls to bottom
+  const { ref, inView } = useInView();
 
   useEffect(() => {
     fetchMemes();
-  }, [filter, page]); // Fetch memes when filter or page changes
+  }, [filter, page]);
 
   useEffect(() => {
-    if (inView) setPage((prev) => prev + 1); // Load more memes when bottom is reached
+    if (inView) setPage((prev) => prev + 1);
   }, [inView]);
 
-  // Fetch memes from API
   const fetchMemes = async () => {
     setLoading(true);
     try {
       const response = await axios.get(API_URL);
       let fetchedMemes = response.data.data.memes.slice(0, 10);
 
-      // Apply filters
       if (filter === "classic") {
         fetchedMemes = fetchedMemes.filter((meme) => meme.width > 500);
       } else if (filter === "random") {
         fetchedMemes = fetchedMemes.sort(() => Math.random() - 0.5);
       }
 
-      // Apply sorting
       if (sortBy === "likes") {
         fetchedMemes = fetchedMemes.sort((a, b) => b.width - a.width);
       } else if (sortBy === "date") {
-        fetchedMemes = fetchedMemes.reverse(); // Assuming newer memes are last
+        fetchedMemes = fetchedMemes.reverse();
       }
 
       setMemes((prev) => (page === 1 ? fetchedMemes : [...prev, ...fetchedMemes]));
@@ -52,7 +50,6 @@ export default function Explore() {
     }
   };
 
-  // Debounced search function
   const handleSearch = useCallback(
     debounce((query) => {
       setSearchQuery(query.toLowerCase());
@@ -62,11 +59,8 @@ export default function Explore() {
 
   return (
     <div className="p-6 text-center">
-      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-        Meme Explorer 🔍
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Meme Explorer 🔍</h2>
 
-      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search memes..."
@@ -74,7 +68,6 @@ export default function Explore() {
         onChange={(e) => handleSearch(e.target.value)}
       />
 
-      {/* Filters */}
       <div className="flex justify-center space-x-4 mb-4">
         {["trending", "new", "classic", "random"].map((category) => (
           <button
@@ -85,7 +78,7 @@ export default function Explore() {
             onClick={() => {
               setFilter(category);
               setPage(1);
-              setMemes([]); // Reset memes when changing filter
+              setMemes([]);
             }}
           >
             {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -93,7 +86,6 @@ export default function Explore() {
         ))}
       </div>
 
-      {/* Sorting */}
       <div className="mb-4">
         <label className="text-gray-800 dark:text-white mr-2">Sort by:</label>
         <select
@@ -109,7 +101,6 @@ export default function Explore() {
         </select>
       </div>
 
-      {/* Meme Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {loading && page === 1
           ? [...Array(6)].map((_, i) => (
@@ -118,27 +109,16 @@ export default function Explore() {
           : memes
               .filter((meme) => meme.name.toLowerCase().includes(searchQuery))
               .map((meme) => (
-                <motion.div
-                  key={meme.id}
-                  className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 shadow-md"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <img
-                    src={meme.url}
-                    alt={meme.name}
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                  <p className="mt-2 text-gray-900 dark:text-white font-medium">
-                    {meme.name}
-                  </p>
-                </motion.div>
+                <Link key={meme.id} to={`/meme/${meme.id}`} state={{ meme }}>
+                  <motion.div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 shadow-md" whileHover={{ scale: 1.05 }}>
+                    <img src={meme.url} alt={meme.name} className="w-full h-48 object-cover rounded-lg" />
+                    <p className="mt-2 text-gray-900 dark:text-white font-medium">{meme.name}</p>
+                  </motion.div>
+                </Link>
               ))}
       </div>
 
-      {/* Infinite Scroll Loader */}
-      {loading && page > 1 && (
-        <p className="text-gray-600 dark:text-gray-400 mt-4">Loading more memes...</p>
-      )}
+      {loading && page > 1 && <p className="text-gray-600 dark:text-gray-400 mt-4">Loading more memes...</p>}
       <div ref={ref}></div>
     </div>
   );
